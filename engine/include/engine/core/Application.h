@@ -53,6 +53,32 @@ public:
         m_queuedLayerActions.push_back(std::move(factory));
     }
 
+    template <std::derived_from<Layer> LayerToErase>
+    void QueueLayerRemove()
+    {
+        auto factory = [this]() mutable {
+
+            int indexToErase = -1;
+
+            for (int i = 0; i < m_layers.size(); ++i)
+            {
+                if (!dynamic_cast<LayerToErase*>(m_layers[i].get()))
+                    continue;
+
+                indexToErase = i;
+                break;
+            }
+
+            if (indexToErase >= 0)
+            {
+                m_layers.erase(m_layers.begin() + indexToErase);
+            }
+
+        };
+
+        m_queuedLayerActions.push_back(std::move(factory));
+    }
+
 private:
     AssetManager m_assetManager{};
     std::vector<std::unique_ptr<Layer>> m_layers{};
