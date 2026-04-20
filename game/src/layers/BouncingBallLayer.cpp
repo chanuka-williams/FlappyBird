@@ -7,7 +7,7 @@
 void BouncingBallLayer::OnUpdate()
 {
     if (IsKeyPressed(KEY_ONE))
-        engine::core::ServiceLocator::GetApplication()->QueueLayerTransition<BouncingBallLayer, MainMenuLayer>();
+        engine::core::ServiceLocator::GetLayerStack().QueueTransition<BouncingBallLayer, MainMenuLayer>();
 
     constexpr float maxDeltaTime = 1.0f / 60.0f; // Cap physics to 60 FPS
     const float deltaTime = std::min(GetFrameTime(), maxDeltaTime);

@@ -5,14 +5,15 @@
 
 int main()
 {
-    const engine::core::AppSpec appSpec;
-    engine::core::Application game(appSpec);
+    using namespace engine::core;
+    const AppSpec appSpec;
+    Application game(appSpec);
 
     // ReSharper disable once CppDFALocalValueEscapesFunction
     // The game's lifetime covers entire program execution so this is safe.
-    engine::core::ServiceLocator::SetApp(&game);
-
-    game.QueueLayerPush<MainMenuLayer>();
+    ServiceLocator::SetApp(&game);
+    ServiceLocator::GetLayerStack().QueuePush<MainMenuLayer>();
+    
     game.Run();
     return 0;
 }

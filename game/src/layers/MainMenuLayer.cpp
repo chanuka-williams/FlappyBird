@@ -7,7 +7,7 @@
 void MainMenuLayer::OnUpdate()
 {
     if (IsKeyPressed(KEY_TWO))
-        engine::core::ServiceLocator::GetApplication()->QueueLayerTransition<MainMenuLayer, BouncingBallLayer>();
+        engine::core::ServiceLocator::GetLayerStack().QueueTransition<MainMenuLayer, BouncingBallLayer>();
 }
 
 void MainMenuLayer::OnRender()
