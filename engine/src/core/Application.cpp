@@ -1,4 +1,5 @@
 #include "engine/core/Application.h"
+#include "engine/core/Layer.h"
 #include "raylib.h"
 
 namespace engine::core
@@ -20,12 +21,12 @@ void Application::Run()
     // Main game loop
     while (!WindowShouldClose())
     {
-        ProcessLayerActions();
+        m_layerStack.ProcessActions();
 
         BeginDrawing();
         ClearBackground(RAYWHITE);
 
-        for (const auto& layer : m_layers)
+        for (const auto& layer : m_layerStack)
         {
             if (layer->GetState() == LayerState::ACTIVE)
                 layer->OnUpdate();
@@ -43,12 +44,9 @@ AssetManager& Application::GetAssetManager()
     return m_assetManager;
 }
 
-void Application::ProcessLayerActions()
+LayerStack& Application::GetLayerStack()
 {
-    for (const auto& factory : m_queuedLayerActions)
-        factory();
-
-    m_queuedLayerActions.clear();
+    return m_layerStack;
 }
 
 } // namespace engine::core
