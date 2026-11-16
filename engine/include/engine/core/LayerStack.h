@@ -60,9 +60,7 @@ public:
             }
 
             if (indexToErase >= 0)
-            {
                 m_layers.erase(m_layers.begin() + indexToErase);
-            }
         };
 
         m_queuedActions.push_back(std::move(factory));
