@@ -15,7 +15,7 @@ public:
     LayerStack() = default;
     ~LayerStack() = default;
 
-    template <std::derived_from<engine::core::Layer> LayerToPush, typename... Args>
+    template <std::derived_from<Layer> LayerToPush, typename... Args>
     void QueuePush(Args&&... args)
     {
         auto factory = [this, ... capturedArgs = std::forward<Args>(args)]() mutable {
@@ -25,8 +25,7 @@ public:
         m_queuedActions.emplace_back(std::move(factory));
     }
 
-    template <std::derived_from<engine::core::Layer> FromLayer, std::derived_from<engine::core::Layer> ToLayer,
-              typename... Args>
+    template <std::derived_from<Layer> FromLayer, std::derived_from<Layer> ToLayer, typename... Args>
     void QueueTransition(Args&&... args)
     {
         auto factory = [this, ... capturedArgs = std::forward<Args>(args)]() mutable {
@@ -45,7 +44,7 @@ public:
         m_queuedActions.push_back(std::move(factory));
     }
 
-    template <std::derived_from<engine::core::Layer> LayerToErase>
+    template <std::derived_from<Layer> LayerToErase>
     void QueueRemove()
     {
         auto factory = [this]() mutable {
@@ -98,7 +97,7 @@ public:
     }
 
 private:
-    std::vector<std::unique_ptr<engine::core::Layer>> m_layers{};
+    std::vector<std::unique_ptr<Layer>> m_layers{};
     std::vector<std::function<void()>> m_queuedActions;
 };
 
