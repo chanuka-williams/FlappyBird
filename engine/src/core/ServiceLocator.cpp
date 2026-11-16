@@ -20,7 +20,8 @@ engine::core::AssetManager& engine::core::ServiceLocator::GetAssetManager()
 
     return s_app->GetAssetManager();
 }
-LayerStack& engine::core::ServiceLocator::GetLayerStack()
+
+engine::core::LayerStack& engine::core::ServiceLocator::GetLayerStack()
 {
     if (s_app == nullptr)
         throw std::runtime_error("ServiceLocator::SetApp must be called before GetAssetManager");

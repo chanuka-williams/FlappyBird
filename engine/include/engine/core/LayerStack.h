@@ -5,6 +5,9 @@
 
 #include "engine/core/Layer.h"
 
+namespace engine::core
+{
+
 class LayerStack
 {
 
@@ -98,3 +101,5 @@ private:
     std::vector<std::unique_ptr<engine::core::Layer>> m_layers{};
     std::vector<std::function<void()>> m_queuedActions;
 };
+
+} // namespace engine::core
