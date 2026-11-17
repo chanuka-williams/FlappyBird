@@ -44,23 +44,48 @@ public:
         m_queuedActions.push_back(std::move(factory));
     }
 
+    template <std::derived_from<Layer> Reference, std::derived_from<Layer> LayerToInsert, typename... Args>
+    void QueueInsertAbove(Args&&... args)
+    {
+        auto factory = [this, ... capturedArgs = std::forward<Args>(args)]() mutable {
+            auto it = FindLayer<Reference>();
+            auto layer = std::make_unique<LayerToInsert>(std::move(capturedArgs)...);
+
+            if (it == m_layers.end())
+                throw std::logic_error(std::string("Reference layer not found to insert a layer above it."));
+
+            m_layers.insert(std::next(it), std::move(layer));
+        };
+
+        m_queuedActions.emplace_back(std::move(factory));
+    }
+
+    template <std::derived_from<Layer> Reference, std::derived_from<Layer> LayerToInsert, typename... Args>
+    void QueueInsertBelow(Args&&... args)
+    {
+        auto factory = [this, ... capturedArgs = std::forward<Args>(args)]() mutable {
+            auto it = FindLayer<Reference>();
+            auto layer = std::make_unique<LayerToInsert>(std::move(capturedArgs)...);
+
+            if (it == m_layers.end())
+                throw std::logic_error(std::string("Reference layer not found to insert a layer below it."));
+
+            m_layers.insert(it, std::move(layer));
+        };
+
+        m_queuedActions.emplace_back(std::move(factory));
+    }
+
     template <std::derived_from<Layer> LayerToErase>
     void QueueRemove()
     {
         auto factory = [this]() mutable {
-            int indexToErase = -1;
+            auto it = FindLayer<LayerToErase>();
 
-            for (int i = 0; i < m_layers.size(); ++i)
-            {
-                if (!dynamic_cast<LayerToErase*>(m_layers[i].get()))
-                    continue;
+            if (it == m_layers.end())
+                throw std::logic_error(std::string("Layer not found to erase it."));
 
-                indexToErase = i;
-                break;
-            }
-
-            if (indexToErase >= 0)
-                m_layers.erase(m_layers.begin() + indexToErase);
+            m_layers.erase(it);
         };
 
         m_queuedActions.push_back(std::move(factory));
@@ -92,6 +117,14 @@ public:
     [[nodiscard]] auto end() const
     {
         return m_layers.cend();
+    }
+
+private:
+    template <typename T>
+    auto FindLayer()
+    {
+        return std::ranges::find_if(m_layers,
+                                    [](const auto& layer) { return dynamic_cast<T*>(layer.get()) != nullptr; });
     }
 
 private:
