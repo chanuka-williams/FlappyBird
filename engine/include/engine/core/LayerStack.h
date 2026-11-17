@@ -94,10 +94,11 @@ public:
 
     void ProcessActions()
     {
-        for (const auto& action : m_queuedActions)
-            action();
-
+        const auto actions = std::move(m_queuedActions);
         m_queuedActions.clear();
+
+        for (const auto& action : actions)
+            action();
     }
 
     auto begin()
