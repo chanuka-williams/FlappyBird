@@ -94,10 +94,10 @@ public:
 
     void ProcessActions()
     {
-        const auto actions = std::move(m_queuedActions);
+        auto actions = std::move(m_queuedActions);
         m_queuedActions.clear();
 
-        for (const auto& action : actions)
+        for (auto& action : actions)
             action();
     }
 
@@ -131,7 +131,7 @@ private:
 
 private:
     std::vector<std::unique_ptr<Layer>> m_layers{};
-    std::vector<std::function<void()>> m_queuedActions;
+    std::vector<std::move_only_function<void()>> m_queuedActions;
 };
 
 } // namespace engine::core
