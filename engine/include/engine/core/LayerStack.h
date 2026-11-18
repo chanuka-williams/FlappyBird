@@ -1,10 +1,10 @@
 #pragma once
 #include <algorithm>
-#include <functional>
 #include <memory>
 #include <vector>
 
 #include "engine/core/Layer.h"
+#include "engine/core/UniqueAction.h"
 
 namespace engine::core
 {
@@ -30,7 +30,7 @@ public:
     void QueueTransition(Args&&... args)
     {
         auto factory = [this, ... capturedArgs = std::forward<Args>(args)]() mutable {
-            auto toLayer = std::make_unique<ToLayer>(std::forward<Args>(capturedArgs)...);
+            auto toLayer = std::make_unique<ToLayer>(std::forward<decltype(capturedArgs)>(capturedArgs)...);
 
             for (auto& layer : m_layers)
             {
@@ -42,7 +42,7 @@ public:
             }
         };
 
-        m_queuedActions.push_back(std::move(factory));
+        m_queuedActions.emplace_back(std::move(factory));
     }
 
     template <std::derived_from<Layer> Reference, std::derived_from<Layer> LayerToInsert, typename... Args>
@@ -89,7 +89,7 @@ public:
             m_layers.erase(it);
         };
 
-        m_queuedActions.push_back(std::move(factory));
+        m_queuedActions.emplace_back(std::move(factory));
     }
 
     void ProcessActions()
@@ -131,7 +131,7 @@ private:
 
 private:
     std::vector<std::unique_ptr<Layer>> m_layers{};
-    std::vector<std::move_only_function<void()>> m_queuedActions;
+    std::vector<UniqueAction> m_queuedActions;
 };
 
 } // namespace engine::core

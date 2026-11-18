@@ -17,7 +17,7 @@ set(SPDLOG_HEADER_ONLY ON CACHE BOOL "" FORCE)
 FetchContent_Declare(
         spdlog
         GIT_REPOSITORY https://github.com/gabime/spdlog.git
-        GIT_TAG        v1.16.0  # Use a specific version for reproducibility
+        GIT_TAG v1.16.0  # Use a specific version for reproducibility
 )
 FetchContent_MakeAvailable(spdlog)
 
@@ -48,13 +48,13 @@ target_include_directories(engine
 
 target_link_libraries(engine
         PUBLIC
-            raylib
-            spdlog::spdlog_header_only
+        raylib
+        spdlog::spdlog_header_only
 )
 
-if(WIN32)
+if (WIN32)
     target_compile_options(engine PUBLIC
             $<$<CXX_COMPILER_ID:MSVC>:/FI$<SHELL_PATH:${CMAKE_CURRENT_SOURCE_DIR}/include/engine/Platform.h>>
             $<$<CXX_COMPILER_ID:GNU,Clang>:-include ${CMAKE_CURRENT_SOURCE_DIR}/include/engine/Platform.h>
     )
-endif()
+endif ()
