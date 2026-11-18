@@ -1,4 +1,4 @@
 /.idea/
-/_deps/
+/.cmake_cache/
 /.design-files/
 /build/

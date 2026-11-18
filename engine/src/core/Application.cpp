@@ -1,4 +1,5 @@
 #include "engine/core/Application.h"
+#include "engine/core/Layer.h"
 #include "raylib.h"
 
 namespace engine::core
@@ -20,20 +21,32 @@ void Application::Run()
     // Main game loop
     while (!WindowShouldClose())
     {
+        m_layerStack.ProcessActions();
 
         BeginDrawing();
         ClearBackground(RAYWHITE);
 
-        DrawText("Congrats! You created your first window!", 190, 200, 20, LIGHTGRAY);
+        for (const auto& layer : m_layerStack)
+        {
+            if (layer->GetState() == LayerState::ACTIVE)
+                layer->OnUpdate();
+
+            if (layer->GetVisibility() == LayerVisibility::VISIBLE)
+                layer->OnRender();
+        }
 
         EndDrawing();
     }
-
 }
 
 AssetManager& Application::GetAssetManager()
 {
     return m_assetManager;
+}
+
+LayerStack& Application::GetLayerStack()
+{
+    return m_layerStack;
 }
 
 } // namespace engine::core
